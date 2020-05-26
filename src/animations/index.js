@@ -1,6 +1,5 @@
 export class Animation {
     constructor(loader) {
-        this.loader = loader
         this.grid = loader.mesh.grid
     }
 
