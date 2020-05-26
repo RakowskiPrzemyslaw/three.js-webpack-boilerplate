@@ -1,1 +1,3 @@
-three-webpack-boilerplate
+# Three.js Webpack Boilerplate 
+
+Work in progress
