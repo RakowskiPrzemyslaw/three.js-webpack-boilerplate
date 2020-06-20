@@ -5,36 +5,41 @@ import { getControls } from './controls'
 import { getRenderer } from './renderer'
 import { getScene } from './scene'
 import { Animation } from './animations';
+import { getComposer } from './postprocessing'
 
-class Loader {
-    constructor() {
-        this.camera = getCamera()
-        this.renderer = getRenderer();
-        this.controls = getControls(this.camera, this.renderer)
-        this.lights = getLights()
-        this.mesh = getMesh()
-        this.scene = getScene(this.mesh, this.lights)
-        this.animation = new Animation(this);
+(async function(module) {
 
-        this.loop();
-        document.body.appendChild(this.renderer.domElement);
-        window.addEventListener('resize', this.handleResize);
+    module.asyncSetup = async () => {
+        module.camera = getCamera()
+        module.renderer = getRenderer();
+        module.controls = getControls(module.camera, module.renderer)
+        module.lights = getLights()
+        module.mesh = await getMesh()
+        module.scene = getScene(module.mesh, module.lights)
+        module.animation = new Animation(module);
+        module.composer = getComposer(module.renderer, module.scene, module.camera)
+
+        module.loop();
+        document.body.appendChild(module.renderer.domElement);
+        window.addEventListener('resize', module.handleResize);
     }
 
-    handleResize = () => {
+    module.handleResize = () => {
         const { innerWidth, innerHeight } = window;
-        this.renderer.setSize(innerWidth, innerHeight);
-        this.camera.aspect = innerWidth / innerHeight;
-        this.camera.updateProjectionMatrix();
+        module.renderer.setSize(innerWidth, innerHeight);
+        module.camera.aspect = innerWidth / innerHeight;
+        module.camera.updateProjectionMatrix();
     }
 
-    loop = () => {
-        if (this.animation.update) {
-            this.animation.update();
+    module.loop = () => {
+        if (module.animation.update) {
+            module.animation.update();
         }
-        this.renderer.render(this.scene, this.camera);
-        requestAnimationFrame(this.loop);
+        module.renderer.render(module.scene, module.camera);
+        requestAnimationFrame(module.loop);
     }
-}
-
-new Loader();
+    console.log(module)
+    await module.asyncSetup()
+    console.log('loaded')
+    return module
+})({})
