@@ -26,6 +26,9 @@ import { getComposer } from './postprocessing'
             module.mesh.cube.material.uniforms.u_mouse.value.x = e.pageX
             module.mesh.cube.material.uniforms.u_mouse.value.y = e.pageY
         })
+        const { innerWidth, innerHeight } = window;
+        module.mesh.cube.material.uniforms.u_resolution.value.x = innerWidth;
+        module.mesh.cube.material.uniforms.u_resolution.value.y = innerHeight;
     }
 
     module.handleResize = () => {

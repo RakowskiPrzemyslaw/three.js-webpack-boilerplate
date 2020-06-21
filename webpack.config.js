@@ -18,7 +18,8 @@ module.exports = {
             ],
         }),
         new HtmlWebpackPlugin({
-            title: 'Three.js Webpack Boilerplate'
+            title: 'Three.js Webpack Boilerplate',
+            template: 'src/index.html'
         })
     ],
     module: {
