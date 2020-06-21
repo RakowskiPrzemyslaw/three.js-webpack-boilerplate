@@ -38,7 +38,9 @@ const createCube = () => {
     const { vertexShader, fragmentShader } = getTestShader()
     const material = new THREE.ShaderMaterial({
         uniforms: {
-            delta: {value: 0}
+            u_time: { type: "f", value: 1.0 },
+            u_resolution: { type: "v2", value: new THREE.Vector2() },
+            u_mouse: { type: "v2", value: new THREE.Vector2() }
         },
         // vertexShader,
         fragmentShader,
@@ -51,6 +53,8 @@ const createCube = () => {
 
     const cube = new THREE.Mesh(geometry, material);
     cube.material.side = THREE.DoubleSide
+    cube.uniformsNeedUpdate = true
+
 
     return cube
 }

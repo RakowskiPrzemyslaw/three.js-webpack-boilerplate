@@ -22,10 +22,17 @@ import { getComposer } from './postprocessing'
         module.loop();
         document.body.appendChild(module.renderer.domElement);
         window.addEventListener('resize', module.handleResize);
+        window.addEventListener('mousemove', (e) => {
+            module.mesh.cube.material.uniforms.u_mouse.value.x = e.pageX
+            module.mesh.cube.material.uniforms.u_mouse.value.y = e.pageY
+        })
     }
 
     module.handleResize = () => {
         const { innerWidth, innerHeight } = window;
+        module.mesh.cube.material.uniforms.u_resolution.value.x = innerWidth;
+        module.mesh.cube.material.uniforms.u_resolution.value.y = innerHeight;
+
         module.renderer.setSize(innerWidth, innerHeight);
         module.camera.aspect = innerWidth / innerHeight;
         module.camera.updateProjectionMatrix();
