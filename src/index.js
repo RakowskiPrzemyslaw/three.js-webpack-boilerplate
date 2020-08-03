@@ -7,49 +7,30 @@ import { getScene } from './scene'
 import { Animation } from './animations';
 import { getComposer } from './postprocessing'
 
-(async function(module) {
+(function(module) {
 
-    module.asyncSetup = async () => {
+    module.setup =  () => {
         module.camera = getCamera()
-        module.renderer = getRenderer();
-        module.controls = getControls(module.camera, module.renderer)
+        module.renderer = getRenderer(); 
+        module.mesh = getMesh()
         module.lights = getLights()
-        module.mesh = await getMesh()
         module.scene = getScene(module.mesh, module.lights)
-        module.animation = new Animation(module);
-        module.composer = getComposer(module.renderer, module.scene, module.camera)
-
         module.loop();
         document.body.appendChild(module.renderer.domElement);
+        console.log('eewe')
         window.addEventListener('resize', module.handleResize);
-        window.addEventListener('mousemove', (e) => {
-            module.mesh.cube.material.uniforms.u_mouse.value.x = e.pageX
-            module.mesh.cube.material.uniforms.u_mouse.value.y = e.pageY
-        })
-        const { innerWidth, innerHeight } = window;
-        module.mesh.cube.material.uniforms.u_resolution.value.x = innerWidth;
-        module.mesh.cube.material.uniforms.u_resolution.value.y = innerHeight;
     }
 
     module.handleResize = () => {
         const { innerWidth, innerHeight } = window;
-        module.mesh.cube.material.uniforms.u_resolution.value.x = innerWidth;
-        module.mesh.cube.material.uniforms.u_resolution.value.y = innerHeight;
-
         module.renderer.setSize(innerWidth, innerHeight);
-        module.camera.aspect = innerWidth / innerHeight;
-        module.camera.updateProjectionMatrix();
     }
 
     module.loop = () => {
-        if (module.animation.update) {
-            module.animation.update();
-        }
         module.renderer.render(module.scene, module.camera);
         requestAnimationFrame(module.loop);
     }
-    console.log(module)
-    await module.asyncSetup()
-    console.log('loaded')
+
+    module.setup()
     return module
 })({})
