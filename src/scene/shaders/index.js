@@ -27,10 +27,10 @@ export const getShader = () => {
             varying vec3 v_position;
 
             void main(){
-                float n = perlin(v_position.x * u_time * 20.0, v_position.y * u_time * 20.0) - u_mouse.y; 
-                float ring = u_Contrast - fract(u_NoiseScale * n / 10.0);
-                float lerp = pow(ring, u_RingScale) + n;
-                vec3 color = mix(u_DarkColor, u_LightColor + u_mouse.x, lerp);
+                float n = perlin(v_position.x * u_time * 10.0, v_position.y * u_time * 10.0) * sin(u_time/ 10.0) * 5.0; 
+                float ring = u_Contrast - fract(u_NoiseScale * n);
+                float lerp = pow(ring * u_time, u_RingScale) + n;
+                vec3 color = mix(u_DarkColor, u_LightColor, lerp);
 
                 gl_FragColor = vec4(color, 1.0);
             }
