@@ -13,6 +13,7 @@ import * as THREE from 'three';
     module.setup =  () => {
         module.camera = getCamera()
         module.renderer = getRenderer(); 
+        module.controls = getControls(module.camera, module.renderer)
         module.mesh = getMesh()
         module.lights = getLights()
         module.scene = getScene(module.mesh, module.lights)
@@ -36,7 +37,9 @@ import * as THREE from 'three';
 
     module.loop = () => {
         module.renderer.render(module.scene, module.camera);
-        module.mesh.plane.material.uniforms.u_time.value += module.clock.getDelta();
+        const delta = module.clock.getDelta();
+        module.mesh.plane.material.uniforms.u_time.value += delta;
+        module.mesh.sphere.material.uniforms.u_time.value += delta;
         requestAnimationFrame(module.loop);
     }
 

@@ -1,3 +1,16 @@
+export const getTurbulence = () => `
+float turbulence( vec3 p ) {
+  float w = 100.0;
+  float t = -.5;
+
+  for (float f = 1.0 ; f <= 10.0 ; f++ ){
+  float power = pow( 2.0, f );
+  t += abs( pnoise( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );
+  }
+
+  return t;
+}`
+
 export const getPerlinNoise = () => `
 float hash(float x, float y) {
 	return fract(abs(sin(sin(123.321 + x) * (y + 321.123)) * 456.654));
