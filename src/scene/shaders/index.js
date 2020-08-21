@@ -62,11 +62,12 @@ export const getSphereShader = () => {
             varying vec3 v_position;
 
             uniform float u_time;
+            uniform float u_audio_freq;
 
             void main() {	
                 v_position = position;
-                v_noise = 10.0 * -0.1 * turbulence(0.5 * normal * sin(u_time / 7.0) * 7.0);
-                float b = perlin(v_position.x, v_position.y) * sin(u_time);
+                v_noise = 10.0 * -0.1 * turbulence(0.5 * normal + u_time);
+                float b = perlin(v_position.x, v_position.y) * u_audio_freq / 10.0;
                 float displacement = b - 10.0 * v_noise;
                 vec3 pos = v_position + normal * displacement;
                 vUv = uv;
@@ -87,6 +88,7 @@ export const getSphereShader = () => {
             uniform float u_NoiseScale;
             uniform float u_RingScale;
             uniform float u_Contrast;
+            uniform float u_audio_freq;
 
             varying vec2 vUv;
             varying float v_noise;
@@ -94,8 +96,8 @@ export const getSphereShader = () => {
             //https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-three-js/
 
             void main (void) {
-                float ring = u_Contrast - fract(u_NoiseScale * v_noise);
-                float lerp = pow(ring * u_time, u_RingScale) * v_noise;
+                float ring = u_Contrast - fract(u_NoiseScale * v_noise * u_audio_freq / 10.0);
+                float lerp = pow(ring * u_time, u_RingScale) * v_noise * u_audio_freq / 10.0;
                 vec3 color = mix(u_DarkColor, u_LightColor, lerp);
 
                 gl_FragColor = vec4(color, 1.0);

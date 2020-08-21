@@ -3,7 +3,7 @@ import { getShader, getSphereShader } from '../shaders'
 
 // create mesh
 const createPlane = () => {
-    const geometry = new THREE.PlaneGeometry(50, 50, 10, 10);
+    const geometry = new THREE.PlaneGeometry(70, 70, 10, 10);
     const { fragmentShader, vertexShader } = getShader()
 
     
@@ -51,6 +51,7 @@ const createPlane = () => {
         side: THREE.DoubleSide
     });
     const plane = new THREE.Mesh(geometry, material)
+    plane.position.set(0, 0, -30);
     return plane
 }
 
@@ -68,7 +69,10 @@ const createSphere = () => {
         u_Frequency: { value: 2.0 },
         u_NoiseScale: { value: 10.0 },
         u_RingScale: { value: 0.2 },
-        u_Contrast: { value: 0.6 }
+        u_Contrast: { value: 0.6 },
+        u_audio_freq: {
+            value: 0
+        }
     }
 
     const material = new THREE.ShaderMaterial({
@@ -85,7 +89,7 @@ const createSphere = () => {
 // register mesh
 export const getMesh = () => {
     return {
-        plane: createPlane(),
+        // plane: createPlane(),
         sphere: createSphere()
     }
 }
