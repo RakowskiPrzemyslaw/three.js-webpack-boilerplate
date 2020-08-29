@@ -1,55 +1,41 @@
-import { getCamera } from './camera'
-import { getLights } from './scene/lights'
-import { getMesh } from './scene/mesh'
-import { getControls } from './controls'
-import { getRenderer } from './renderer'
-import { getScene } from './scene'
-import { Animation } from './animations';
-import { getComposer } from './postprocessing'
+import * as THREE from 'three';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { loadScene } from 'src/scene'
+import { draw } from 'src/sketch'
+import { handleResize } from 'src/lib'
 
-(async function(module) {
+const getRenderer = () => {
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    return renderer
+}
 
-    module.asyncSetup = async () => {
-        module.camera = getCamera()
-        module.renderer = getRenderer();
-        module.controls = getControls(module.camera, module.renderer)
-        module.lights = getLights()
-        module.mesh = await getMesh()
-        module.scene = getScene(module.mesh, module.lights)
-        module.animation = new Animation(module);
-        module.composer = getComposer(module.renderer, module.scene, module.camera)
+const getCamera = () => {
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.0001, 10000);
+    camera.position.set(0, 0, 20);
+    return camera
+}
 
-        module.loop();
-        document.body.appendChild(module.renderer.domElement);
-        window.addEventListener('resize', module.handleResize);
-        window.addEventListener('mousemove', (e) => {
-            module.mesh.cube.material.uniforms.u_mouse.value.x = e.pageX
-            module.mesh.cube.material.uniforms.u_mouse.value.y = e.pageY
-        })
-        const { innerWidth, innerHeight } = window;
-        module.mesh.cube.material.uniforms.u_resolution.value.x = innerWidth;
-        module.mesh.cube.material.uniforms.u_resolution.value.y = innerHeight;
-    }
+const getControls = (camera, renderer) => {
+    return new OrbitControls(camera, renderer.domElement);
+}
 
-    module.handleResize = () => {
-        const { innerWidth, innerHeight } = window;
-        module.mesh.cube.material.uniforms.u_resolution.value.x = innerWidth;
-        module.mesh.cube.material.uniforms.u_resolution.value.y = innerHeight;
+function loop({scene, camera, renderer, controls}) {
+    draw({ scene, camera, renderer, controls })
+    renderer.render(scene, camera);
+    requestAnimationFrame(() => loop({scene, camera, renderer, controls}));
+} 
 
-        module.renderer.setSize(innerWidth, innerHeight);
-        module.camera.aspect = innerWidth / innerHeight;
-        module.camera.updateProjectionMatrix();
-    }
+async function main() {
+    const renderer = getRenderer()
+    const camera = getCamera()
+    const controls = getControls(camera, renderer)
 
-    module.loop = () => {
-        if (module.animation.update) {
-            module.animation.update();
-        }
-        module.renderer.render(module.scene, module.camera);
-        requestAnimationFrame(module.loop);
-    }
-    console.log(module)
-    await module.asyncSetup()
-    console.log('loaded')
-    return module
-})({})
+    const scene = await loadScene();
+
+    loop({scene, camera, renderer, controls})
+
+    document.body.appendChild(renderer.domElement);
+    window.addEventListener('resize', () => handleResize(camera, renderer));
+}
+main()

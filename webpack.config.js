@@ -7,6 +7,11 @@ module.exports = {
     entry: {
         app: './src/index.js',
     },
+    resolve: {
+        alias: {
+            src: path.resolve(__dirname, 'src')
+        }
+    },
     devServer: {
         contentBase: __dirname + "/dist",
         port: 3000
