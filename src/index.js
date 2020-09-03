@@ -5,8 +5,13 @@ import { draw } from 'src/sketch'
 import { handleResize } from 'src/lib'
 
 const getRenderer = () => {
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ 
+        antialias: true, 
+        alpha: true, 
+        // preserveDrawingBuffer: true, 
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.autoClear = false
     return renderer
 }
 
@@ -20,21 +25,28 @@ const getControls = (camera, renderer) => {
     return new OrbitControls(camera, renderer.domElement);
 }
 
-function loop({scene, camera, renderer, controls}) {
-    draw({ scene, camera, renderer, controls })
+function loop({scene, camera, renderer, controls, uniforms, clock }) {
+    uniforms.u_time.value = clock.getElapsedTime()
+    draw({ scene, camera, renderer, controls, uniforms, clock })
     renderer.render(scene, camera);
-    requestAnimationFrame(() => loop({scene, camera, renderer, controls}));
+    requestAnimationFrame(() => loop({scene, camera, renderer, controls, uniforms, clock}));
 } 
 
 async function main() {
     const renderer = getRenderer()
     const camera = getCamera()
     const controls = getControls(camera, renderer)
+    const clock = new THREE.Clock()
+    const uniforms = {
+        u_time: {
+            value: 0
+        }
+    }
 
-    const scene = await loadScene();
+    const scene = await loadScene(uniforms);
 
-    loop({scene, camera, renderer, controls})
-
+    loop({scene, camera, renderer, controls, uniforms, clock})
+    console.log(renderer)
     document.body.appendChild(renderer.domElement);
     window.addEventListener('resize', () => handleResize(camera, renderer));
 }
