@@ -17,7 +17,8 @@ const getRenderer = () => {
 
 const getCamera = () => {
     const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.0001, 10000);
-    camera.position.set(0, 0, 20);
+    camera.position.set(0.44064572996932505, 1.4272169527666718, 0.6606087375450753);
+    camera.rotation.set(-0.9745736468169466, 0.28037000897242303, 0.38718177647286905)
     return camera
 }
 
@@ -41,6 +42,10 @@ async function main() {
         u_time: {
             value: 0
         }
+    }
+
+    window.test = () => {
+        console.log(camera)
     }
 
     const scene = await loadScene(uniforms);

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
 import { loadFile } from 'src/lib'
 import { noise } from 'src/MyShaderChunk.js'
 
@@ -47,10 +48,49 @@ const loadDonut = () => {
     })
 }
 
+const loadPlant = (uniforms) => {
+    // instantiate a loader
+    const loader = new PLYLoader();
+
+    return new Promise((resolve, reject) => {
+        loader.load('assets/mesh.ply', async (geometry) => {
+            console.log(geometry)
+            
+
+
+            geometry.computeVertexNormals();
+            const vertexShader = await loadFile({ path: 'assets/first.vert' })
+            const fragmentShader = await loadFile({ path: 'assets/first.frag' })
+
+            const material = new THREE.ShaderMaterial({
+                vertexShader: `
+            ${noise}
+            ${vertexShader}
+        `,
+                fragmentShader: `
+            ${noise}
+            ${fragmentShader}
+        `,
+                uniforms
+            });
+            // const material = new THREE.PointsMaterial({ color: 0x888888, size: 0.01 });
+            // material.blending = THREE.AdditiveBlending
+            geometry.rotateZ(1.4)
+
+            const mesh = new THREE.Points(geometry, material);
+    
+            resolve(mesh)
+        })
+       
+    });
+
+}
+
 // register mesh
 export const getMesh = async (uniforms) => {
     return {
-        grid: await createGrid(uniforms),
-        donut: await loadDonut()
+        // grid: await createGrid(uniforms),
+        // donut: await loadDonut(),
+        plant: await loadPlant(uniforms)
     }
 }
