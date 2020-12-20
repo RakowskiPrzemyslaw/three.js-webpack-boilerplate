@@ -25,11 +25,11 @@ const getControls = (camera, renderer) => {
     return new OrbitControls(camera, renderer.domElement);
 }
 
-function loop({scene, camera, renderer, controls, uniforms, clock }) {
-    uniforms.u_time.value = clock.getElapsedTime()
-    draw({ scene, camera, renderer, controls, uniforms, clock })
+function loop({ scene, camera, renderer, controls, uniforms, updateUniforms }) {
+    updateUniforms()
+    draw({ scene, camera, renderer, controls, uniforms })
     renderer.render(scene, camera);
-    requestAnimationFrame(() => loop({scene, camera, renderer, controls, uniforms, clock}));
+    requestAnimationFrame(() => loop({ scene, camera, renderer, controls, uniforms, updateUniforms }));
 } 
 
 async function main() {
@@ -43,10 +43,13 @@ async function main() {
         }
     }
 
+    const updateUniforms = () => {
+        uniforms.u_time.value = clock.getElapsedTime()
+    }
+
     const scene = await loadScene(uniforms);
 
-    loop({scene, camera, renderer, controls, uniforms, clock})
-    console.log(renderer)
+    loop({scene, camera, renderer, controls, uniforms, clock, updateUniforms})
     document.body.appendChild(renderer.domElement);
     window.addEventListener('resize', () => handleResize(camera, renderer));
 }

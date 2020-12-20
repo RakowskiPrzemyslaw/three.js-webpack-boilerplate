@@ -5,7 +5,7 @@ uniform float u_time;
 
 void main (void) {
   vec3 color;
-  vec3 color2 = vec3(floor(v_noise * 2.0) / 15.0);
+  vec3 color2 = vec3(v_position.z / 4.0);
   if (mod(v_position.z, 0.001) == 0.0) {
     color = vec3(0.0);
   } else {
@@ -13,5 +13,5 @@ void main (void) {
   }
   
 
-  gl_FragColor = vec4(color, 1.0);
+  gl_FragColor = vec4(color2, 1.0);
 }

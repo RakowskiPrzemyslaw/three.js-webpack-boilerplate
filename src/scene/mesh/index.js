@@ -1,28 +1,16 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { loadFile } from 'src/lib'
-import { noise } from 'src/MyShaderChunk.js'
+import vertexShader from './first.vert'
+import fragmentShader from './first.frag'
 
 const createGrid = async (uniforms) => {
-    const geometry = new THREE.PlaneGeometry(20, 20, 500, 500);
-
-
-    const vertexShader = await loadFile({ path: 'assets/first.vert' })
-    const fragmentShader = await loadFile({ path: 'assets/first.frag' })
+    const geometry = new THREE.PlaneGeometry(30, 5, 550, 550);
 
     const material = new THREE.ShaderMaterial({
-        vertexShader: `
-            ${noise}
-            ${vertexShader}
-        `,
-        fragmentShader: `
-            ${noise}
-            ${fragmentShader}
-        `,
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
         uniforms
     });
-
-    console.log(material)
 
     const grid = new THREE.Mesh(geometry, material);
     // grid.rotation.x = -20
